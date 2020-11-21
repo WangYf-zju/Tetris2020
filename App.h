@@ -32,6 +32,8 @@ private:
 
 signals:
     void updateBoard();
+    void appStart();
+    void appStop();
 };
 
 #endif // APP_H

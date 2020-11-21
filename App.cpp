@@ -16,6 +16,7 @@ void App::run()
         isStart = false;
         return;
     }
+    emit appStart();
     QString name = mc.SerialName();
     mc.CloseSerial();
     msleep(1000);
@@ -45,6 +46,7 @@ void App::run()
             grab = false;
         }
     }
+    emit appStop();
     m.CloseSerial();
 }
 

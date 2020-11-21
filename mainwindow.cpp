@@ -10,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
     InitTableList();
     connect(&timer, &QTimer::timeout, this, [&]() { UpdateTableList(); });
     connect(&app, &App::updateBoard, this, [&]() { ui->WBoard->UpdateBoard(); });
+    connect(&app, &App::appStart, this, [&]() { LockUI(); });
+    connect(&app, &App::appStop, this, [&]() { UnlockUI(); });
     connect(ui->PBRefresh, &QPushButton::clicked, this, [&]() { SearchDevice(); });
     connect(ui->PBSerial, &QPushButton::clicked, this, [&]() { ConnectSerial(); });
     connect(ui->PBCamera, &QPushButton::clicked, this, [&]() { ConnectCamera(); });
@@ -52,7 +54,8 @@ void MainWindow::ConnectCamera()
     {
         if (ui->CBCamera->currentIndex() < 0)
         {
-            QMessageBox::warning(this, "Error", "No camera is selected!", "OK");
+            QMessageBox::warning(this, "Error", "No camera is selected!", 
+                QMessageBox::Ok);
             return;
         }
         char index[] = { (char)('0' + ui->CBCamera->currentIndex()), (char)0 };
@@ -63,7 +66,8 @@ void MainWindow::ConnectCamera()
         }
         else
         {
-            QMessageBox::warning(this, "Error", "Fail to open camera", "OK");
+            QMessageBox::warning(this, "Error", "Fail to open camera", 
+                QMessageBox::Ok);
         }
     }
     else
@@ -81,7 +85,8 @@ void MainWindow::ConnectSerial()
     {
         if (ui->CBSerial->currentIndex() < 0)
         {
-            QMessageBox::warning(this, "Error", "No serial port is selected!", "OK");
+            QMessageBox::warning(this, "Error", "No serial port is selected!", 
+                QMessageBox::Ok);
             return;
         }
         QString name = ui->CBSerial->currentText();
@@ -91,7 +96,8 @@ void MainWindow::ConnectSerial()
         }
         else
         {
-            QMessageBox::warning(this, "Error", "Fail to open serial prot", "OK");
+            QMessageBox::warning(this, "Error", "Fail to open serial prot", 
+                QMessageBox::Ok);
         }
     }
     else
@@ -143,7 +149,8 @@ void MainWindow::START()
         if (!app.v.IsCameraOpen() || !app.mc.IsSerialOpen())
         {
             QMessageBox::warning(this, "Error", 
-                "Camera or Serial Port has not been connected!", "OK");
+                "Camera or Serial Port has not been connected!", 
+                QMessageBox::Ok);
             return;
         }
         app.StartApp();
@@ -155,7 +162,6 @@ void MainWindow::START()
         ui->PBStart->setText("START");
         ui->PBSerial->setText("Connect");
     }
-
 }
 
 void MainWindow::InitTableList()
@@ -188,4 +194,22 @@ void MainWindow::UpdateTableList()
         itemModel->setItem(i, 3, new QStandardItem(QString::number(angle)));
         itemModel->setItem(i, 4, new QStandardItem(time));
     }
+}
+
+void MainWindow::LockUI()
+{
+    ui->CBCamera->setEnabled(false);
+    ui->PBCamera->setEnabled(false);
+    ui->CBSerial->setEnabled(false);
+    ui->PBSerial->setEnabled(false);
+    ui->PBSet->setEnabled(false);
+}
+
+void MainWindow::UnlockUI()
+{
+    ui->CBCamera->setEnabled(true);
+    ui->PBCamera->setEnabled(true);
+    ui->CBSerial->setEnabled(true);
+    ui->PBSerial->setEnabled(true);
+    ui->PBSet->setEnabled(true);
 }

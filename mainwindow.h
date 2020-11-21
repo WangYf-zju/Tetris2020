@@ -37,5 +37,7 @@ public:
     void START();
     void InitTableList();
     void UpdateTableList();
+    void LockUI();
+    void UnlockUI();
 };
 #endif // MAINWINDOW_H
