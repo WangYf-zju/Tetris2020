@@ -21,7 +21,7 @@ public:
 
 protected:
     void paintEvent(QPaintEvent * event) override;
-    virtual void mouseReleaseEvent(QMouseEvent * ev) override;
+    virtual void mouseReleaseEvent(QMouseEvent * event) override;
 
 private:
     BoardState * pBoard;

@@ -2,6 +2,11 @@
 #include <stdio.h>
 #include <math.h>
 
+double TetrisGrabList::grabXMin = -190;
+double TetrisGrabList::grabXMax = 190;
+double TetrisGrabList::grabYMin = -180;
+double TetrisGrabList::grabYMax = 180;
+double TetrisGrabList::grabYWarn = 120;
 
 Video::Video()
 {
@@ -57,10 +62,10 @@ void Video::run()
         SetPart(hv_WindowHandle, 0, 0, hl_height, hl_width);
         
         DispObj(ho_ImageMapped, hv_WindowHandle);
-        lock.lock();
         ReduceDomain(ho_ImageMapped, ho_Region, &ho_ImageReduce);
+        grabList.Lock();
         Distinguish(ho_ImageReduce);
-        lock.unlock();
+        grabList.Unlock();
         wait(200);
     }
     CloseFramegrabber(hv_AcqHandle);
@@ -186,18 +191,19 @@ void Video::AddTetrisToGrabList(TetrisInfo & ti, QTime time)
     const double error = 10;
     for (int i = 0; i < grabList.length(); )
     {
-        if (!grabList[i].UpdateInfo(time))
+        TetrisInfo temp_ti = grabList[i];
+        if (!ti.UpdateInfo(time))
         {
             grabList.removeAt(i);
             continue;
         }
-        if (grabList[i].type == ti.type && (fabs(grabList[i].x - ti.x) <= error &&
-            fabs(grabList[i].y - ti.y) <= error))
+        if (ti.type == ti.type && (fabs(ti.x - ti.x) <= error &&
+            fabs(ti.y - ti.y) <= error))
         {
-            grabList[i].x = ti.x;
-            grabList[i].y = ti.y;
-            grabList[i].angle = ti.angle;
-            grabList[i].t = ti.t;
+            ti.x = ti.x;
+            ti.y = ti.y;
+            ti.angle = ti.angle;
+            ti.t = ti.t;
             return;
         }
         i++;

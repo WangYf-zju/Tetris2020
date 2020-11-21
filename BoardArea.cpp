@@ -5,7 +5,7 @@ BoardArea::BoardArea(QWidget *parent) : QWidget(parent)
     blockSize = 24;
     pBoard = nullptr;
     isModify = false;
-    BindBoard(TetrisAI::m_pBoard);
+    BindBoard(TetrisAI::PBoard);
     setAutoFillBackground(true);
     UpdateBoard();
 }
@@ -49,12 +49,12 @@ void BoardArea::paintEvent(QPaintEvent * event)
     }
 }
 
-void BoardArea::mouseReleaseEvent(QMouseEvent * ev)
+void BoardArea::mouseReleaseEvent(QMouseEvent * event)
 {
-    if (isModify && ev->button() == Qt::LeftButton)
+    if (isModify && event->button() == Qt::LeftButton)
     {
-        int x = (ev->x() - 5) / blockSize;
-        int y = (ev->y() - 5) / blockSize;
+        int x = (event->x() - 5) / blockSize;
+        int y = (event->y() - 5) / blockSize;
         if (pBoard && x >= 0 && x < COL && y >= 0 && y < ROW)
             TetrisAI::ReverseBlock(x, y);
         update();

@@ -1,6 +1,6 @@
 #include "TetrisAI.h"
-#include <stdlib.h>
 
+// Global tetris shape array
 const bool TetrisShapeArray[7][4][16] =
 {
 {{1,0,0,0,1,1,1},{0,1,1,0,0,1,0,0,0,1},{0,0,0,0,1,1,1,0,0,0,1},{0,1,0,0,0,1,0,0,1,1}},
@@ -12,18 +12,18 @@ const bool TetrisShapeArray[7][4][16] =
     {0,0,0,0,1,1,1,1},{0,1,0,0,0,1,0,0,0,1,0,0,0,1}},
 {{0,1,0,0,1,1,1},{0,1,0,0,0,1,1,0,0,1},{0,0,0,0,1,1,1,0,0,1},{0,1,0,0,1,1,0,0,0,1}}
 };
-
+// Global board state variable
 BoardState board;
-
+// Global tetris shape pointerd
 const bool(*TetrisAI::TetrisShape)[4][16] = TetrisShapeArray;
-BoardState* TetrisAI::m_pBoard = &board;
-
+BoardState* TetrisAI::PBoard = &board;
 
 TetrisAI::TetrisAI(int type)
 {
-    if (type < 0 || type>6)
+    if (type < 0 || type > 6)
     {
-        m_type = rand() % 7;
+        m_type = 0;
+        throw "TetrisAI: parameter type should be a number between 0 to 6";
     }
     else
     {
@@ -36,7 +36,6 @@ TetrisAI::TetrisAI(int type)
     m_rank = -1e10;
     FindSupremePos();
 }
-
 
 TetrisAI::~TetrisAI()
 {
@@ -112,7 +111,7 @@ bool TetrisAI::CanPlaceTetris(int x, int y, int r)
 
 bool TetrisAI::CanPlaceBlock(int x, int y)
 {
-    if (x < 0 || x >= COL || y < 0 || y >= ROW || (*m_pBoard)[y][x])
+    if (x < 0 || x >= COL || y < 0 || y >= ROW || (*PBoard)[y][x])
         return false;
     return true;
 }
@@ -120,7 +119,7 @@ bool TetrisAI::CanPlaceBlock(int x, int y)
 
 void TetrisAI::BindBoard(BoardState * pBoard)
 {
-    m_pBoard = pBoard;
+    PBoard = pBoard;
 }
 
 
@@ -176,7 +175,7 @@ int TetrisAI::CalcEroded()
         flag = true;
         for (int x = 0; x < COL; x++)
         {
-            if (!(*m_pBoard)[y][x])
+            if (!(*PBoard)[y][x])
                 flag = false;
         }
         if (flag) count++;
@@ -194,8 +193,8 @@ int TetrisAI::CalcHoles()
         flag = false;
         for (int y = COL - 1; y >= 0; y--)
         {
-            if ((*m_pBoard)[y][x]) flag = true;
-            if (flag && !(*m_pBoard)[y][x]) count++;
+            if ((*PBoard)[y][x]) flag = true;
+            if (flag && !(*PBoard)[y][x]) count++;
         }
     }
     return 0;
@@ -250,19 +249,25 @@ void TetrisAI::PlaceTetris(int type, TetrisPosition * pos)
     }
 }
 
+double TetrisAI::GetSupremeRank(int type)
+{
+    TetrisAI ta(type);
+    return ta.GetSupremeRank();
+}
+
 void TetrisAI::ReverseBlock(int x, int y)
 {
-    (*m_pBoard)[y][x] = !(*m_pBoard)[y][x];
+    (*PBoard)[y][x] = !(*PBoard)[y][x];
 }
 
 void TetrisAI::SetBlock(int x, int y)
 {
-    (*m_pBoard)[y][x] = true;
+    (*PBoard)[y][x] = true;
 }
 
 void TetrisAI::RemoveBlock(int x, int y)
 {
-    (*m_pBoard)[y][x] = false;
+    (*PBoard)[y][x] = false;
 }
 
 void TetrisAI::ClearBoard()
@@ -281,13 +286,13 @@ int TetrisAI::CalcRowTrans()
     int count = 0;
     for (int y = 0; y < ROW; y++)
     {
-        if (!(*m_pBoard)[0][y]) count++;
+        if (!(*PBoard)[0][y]) count++;
         for (int x = 1; x < COL; x++)
         {
-            if ((*m_pBoard)[y][x] != (*m_pBoard)[y][x - 1])
+            if ((*PBoard)[y][x] != (*PBoard)[y][x - 1])
                 count++;
         }
-        if (!(*m_pBoard)[y][COL - 1]) count++;
+        if (!(*PBoard)[y][COL - 1]) count++;
     }
     return count;
 }
@@ -298,13 +303,13 @@ int TetrisAI::CalcColTrans()
     int count = 0;
     for (int x = 0; x < COL; x++)
     {
-        if (!(*m_pBoard)[0][x]) count++;
+        if (!(*PBoard)[0][x]) count++;
         for (int y = 1; y < ROW; y++)
         {
-            if ((*m_pBoard)[y][x] != (*m_pBoard)[y - 1][x])
+            if ((*PBoard)[y][x] != (*PBoard)[y - 1][x])
                 count++;
         }
-        if (!(*m_pBoard)[ROW - 1][x]) count++;
+        if (!(*PBoard)[ROW - 1][x]) count++;
     }
     return count;
 }
@@ -312,6 +317,7 @@ int TetrisAI::CalcColTrans()
 
 void TetrisAI::CalcCR()
 {
+    // Clear array.
     for (int i = 0; i < 50; i++)
     {
         m_CRGridCount[i] = 0;
@@ -320,6 +326,7 @@ void TetrisAI::CalcCR()
     {
         m_CRCount[i] = 0;
     }
+    // Use connected region algorithm to count x-gird region.
     int order = 0;
     int hOrder = 0;
     int boardFlag[ROW][COL] = { 0 };

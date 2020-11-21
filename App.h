@@ -7,13 +7,7 @@
 
 #include "MachineController.h"
 #include "Video.h"
-#include "TetrisAI.h"
 
-#define PLACE_OFFSET_X 33
-#define PLACE_OFFSET_Y 20
-#define PLACE_Z -398 
-#define GRID_SIZE 17.7
-#define GRAB_Z -430
 
 class App: public QThread
 {

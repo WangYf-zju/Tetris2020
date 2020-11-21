@@ -55,7 +55,7 @@ void MainWindow::ConnectCamera()
             QMessageBox::warning(this, "Error", "No camera is selected!", "OK");
             return;
         }
-        char index[] = { '0' + ui->CBCamera->currentIndex(), 0 };
+        char index[] = { (char)('0' + ui->CBCamera->currentIndex()), (char)0 };
         if (app.v.OpenCamera(index, ui->LBVideo))
         {
             ui->PBCamera->setText("Disconnect");
@@ -171,8 +171,8 @@ void MainWindow::InitTableList()
 
 void MainWindow::UpdateTableList()
 {
-    app.v.lock.lock();
-    app.v.lock.unlock();
+    app.v.viewList.Lock();
+    app.v.viewList.Unlock();
     for (int i = itemModel->rowCount() - 1; i >= 0; i--)
         itemModel->removeRow(i);
     for (int i = 0; i < app.v.viewList.length(); i++)
