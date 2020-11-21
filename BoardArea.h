@@ -30,6 +30,7 @@ private:
     void DrawBlock(QPainter & painter, const int x, const int y);
     void DrawBlock(QPainter & painter, const int x, const int y, const QColor &color);
     void DrawBoard(QPainter & painter);
+    static const QColor * color;
 };
 
 #endif // BOARDAREA_H

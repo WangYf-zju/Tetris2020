@@ -64,7 +64,6 @@ double TetrisAI::GetSupremeRank()
     return m_rank;
 }
 
-
 bool TetrisAI::FindSupremePos()
 {
     bool canPlace = false;
@@ -111,7 +110,7 @@ bool TetrisAI::CanPlaceTetris(int x, int y, int r)
 
 bool TetrisAI::CanPlaceBlock(int x, int y)
 {
-    if (x < 0 || x >= COL || y < 0 || y >= ROW || (*PBoard)[y][x])
+    if (x < 0 || x >= COL || y < 0 || y >= ROW || (*PBoard)[y][x] != 0)
         return false;
     return true;
 }
@@ -203,13 +202,14 @@ int TetrisAI::CalcHoles()
 
 void TetrisAI::PlaceTetris(int x, int y, int r)
 {
+    int color = m_type + 2;
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
         {
             if (TetrisShape[m_type][r][4 * j + i])
             {
-                SetBlock(x + i, y + j);
+                SetBlock(x + i, y + j, color);
             }
         }
     }
@@ -235,15 +235,21 @@ void TetrisAI::RemoveTetris(int x, int y, int r)
     }
 }
 
+BoardState * TetrisAI::GetBoard()
+{
+    return PBoard;
+}
+
 void TetrisAI::PlaceTetris(int type, TetrisPosition * pos)
 {
+    int color = type + 2;
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
         {
             if (TetrisShape[type][pos->r][4 * j + i])
             {
-                SetBlock(pos->x + i, pos->y + j);
+                SetBlock(pos->x + i, pos->y + j, color);
             }
         }
     }
@@ -260,14 +266,14 @@ void TetrisAI::ReverseBlock(int x, int y)
     (*PBoard)[y][x] = !(*PBoard)[y][x];
 }
 
-void TetrisAI::SetBlock(int x, int y)
+void TetrisAI::SetBlock(int x, int y, int color)
 {
-    (*PBoard)[y][x] = true;
+    (*PBoard)[y][x] = color;
 }
 
 void TetrisAI::RemoveBlock(int x, int y)
 {
-    (*PBoard)[y][x] = false;
+    (*PBoard)[y][x] = 0;
 }
 
 void TetrisAI::ClearBoard()

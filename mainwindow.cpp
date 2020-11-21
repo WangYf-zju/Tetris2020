@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->PBStart, &QPushButton::clicked, this, [&]() { START(); });
     connect(ui->PBModify, &QPushButton::clicked, this, [&]() { ModifyBoard(); });
     connect(ui->PBClear, &QPushButton::clicked, this, [&]() { ClearBoard(); });
-    SearchDevice(); 
+    SearchDevice();
 }
 
 MainWindow::~MainWindow()

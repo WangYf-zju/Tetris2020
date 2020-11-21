@@ -3,7 +3,8 @@
 
 #define ROW 12
 #define COL 10
-typedef bool BoardStateArray[ROW][COL];
+#define DEFALUT_COLOR 8
+typedef int BoardStateArray[ROW][COL];
 typedef int ConnectRegion[50];
 
 typedef struct {
@@ -16,7 +17,7 @@ typedef struct {
 class BoardState
 {
 public:
-    bool * operator[](const int & i) { return bsa[i]; }
+    int * operator[](const int & i) { return bsa[i]; }
 private:
     BoardStateArray bsa;
 };
@@ -36,10 +37,12 @@ public:
     /* public static variables */
     // static tetris shape array pointer
     static const bool(*TetrisShape)[4][16];
+
+private:
+    /* private static variables */
     // static board pointer
     static BoardState * PBoard;
 
-private:
     /* private member variables */
     // tetris type
     int m_type;
@@ -72,6 +75,8 @@ public:
     void RemoveTetris(int x, int y, int r);
 
     /* public static methods */
+    // Get board pointer
+    static BoardState * GetBoard();
     // Place a tetris to a specific position.
     static void PlaceTetris(int type, TetrisPosition * pos);
     // Get supreme rank of a specific tetris.
@@ -79,7 +84,7 @@ public:
     // Reverse the state of a grid on board.
     static void ReverseBlock(int x, int y);
     // Set the state of a grid on board.
-    static void SetBlock(int x, int y);
+    static void SetBlock(int x, int y, int color);
     // Remove the block from a grid on board.
     static void RemoveBlock(int x, int y);
     // Clear the board (Remove all the blocks on board).

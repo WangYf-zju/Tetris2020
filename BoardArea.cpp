@@ -1,11 +1,16 @@
 #include "BoardArea.h"
 
+const QColor colors[] = { QColor("#ffffff"), QColor("#cccccc"),
+    QColor("#e74c3c"), QColor("#e67e22"), QColor("#f1c40f"),
+    QColor("#2ecc71"), QColor("#3498db"), QColor("#1abc9c"), QColor("#9b59b6") };
+const QColor * BoardArea::color = colors;
+
 BoardArea::BoardArea(QWidget *parent) : QWidget(parent)
 {
     blockSize = 24;
     pBoard = nullptr;
     isModify = false;
-    BindBoard(TetrisAI::PBoard);
+    BindBoard(TetrisAI::GetBoard());
     setAutoFillBackground(true);
     UpdateBoard();
 }
@@ -63,11 +68,9 @@ void BoardArea::mouseReleaseEvent(QMouseEvent * event)
 
 void BoardArea::DrawBlock(QPainter & painter, const int x, const int y)
 {
-    QColor color(255, 255, 255);
-    if ((*pBoard)[y][x])
-        color = QColor(200, 200, 200);
+    QColor c = this->color[(*pBoard)[y][x]];
     painter.fillRect(7 + x * blockSize, 7 + y * blockSize,
-        blockSize - 4, blockSize - 4, color);
+        blockSize - 4, blockSize - 4, c);
 }
 
 void BoardArea::DrawBlock(QPainter & painter, const int x, const int y, const QColor & color)
