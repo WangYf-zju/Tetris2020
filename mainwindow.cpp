@@ -8,8 +8,15 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     InitTableList();
-    connect(&timer, &QTimer::timeout, this, [&]() { UpdateTableList(); });
-    connect(&app, &App::updateBoard, this, [&]() { ui->WBoard->UpdateBoard(); });
+    connect(&timer, &QTimer::timeout, this, [&]() { 
+        UpdateTableList(); 
+    });
+    connect(&app, &App::grabTetris, this, [&]() { 
+        ui->WBoard->UpdateBoard();
+        int score = ui->WBoard->CalculateScore();
+        QString msg = QString("{\"score\": %1}").arg(score);
+        app.s.SendData(msg);
+    });
     connect(&app, &App::appStart, this, [&]() { LockUI(); });
     connect(&app, &App::appStop, this, [&]() { UnlockUI(); });
     connect(ui->PBRefresh, &QPushButton::clicked, this, [&]() { SearchDevice(); });
@@ -20,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->PBModify, &QPushButton::clicked, this, [&]() { ModifyBoard(); });
     connect(ui->PBClear, &QPushButton::clicked, this, [&]() { ClearBoard(); });
     SearchDevice();
+    app.s.StartServer(3000);
 }
 
 MainWindow::~MainWindow()

@@ -1,4 +1,4 @@
-QT       += core gui serialport multimedia
+QT       += core gui serialport multimedia websockets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -19,6 +19,7 @@ SOURCES += \
     App.cpp \
     BoardArea.cpp \
     MachineController.cpp \
+    Server.cpp \
     TetrisAI.cpp \
     Video.cpp \
     main.cpp \
@@ -28,6 +29,7 @@ HEADERS += \
     App.h \
     BoardArea.h \
     MachineController.h \
+    Server.h \
     TetrisAI.h \
     Video.h \
     mainwindow.h

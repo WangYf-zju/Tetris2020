@@ -35,6 +35,13 @@ void BoardArea::BindBoard(BoardState * pBoard)
     this->pBoard = pBoard;
 }
 
+int BoardArea::CalculateScore()
+{
+    int tetris_count = CountTetrisNum();
+    int fullrow_count = CountFullRow();
+    return tetris_count * ScoreForEachTetris + fullrow_count * ScoreForEachRow;
+}
+
 void BoardArea::paintEvent(QPaintEvent * event)
 {
     QPainter painter(this);
@@ -88,3 +95,37 @@ void BoardArea::DrawBoard(QPainter & painter)
         painter.drawLine(5, 5 + y * blockSize, 5 + blockSize * COL, 5 + y * blockSize);
 }
 
+int BoardArea::CountFullRow()
+{
+    int x, y, fullrow = 0;
+    if (pBoard != nullptr)
+    {
+        for (y = 0; y < ROW; y++)
+        {
+            for (x = 0; x < COL; x++)
+            {
+                if ((*pBoard)[y][x] == 0)
+                    break;
+            }
+            if (x == COL) fullrow++;
+        }
+    }
+    return fullrow;
+}
+
+int BoardArea::CountTetrisNum()
+{
+    int count = 0;
+    if (pBoard != nullptr)
+    {
+        for (int y = 0; y < ROW; y++)
+        {
+            for (int x = 0; x < COL; x++)
+            {
+                if ((*pBoard)[y][x] != 0)
+                    count++;
+            }
+        }
+    }
+    return count / 4;
+}

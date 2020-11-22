@@ -14,18 +14,19 @@ using namespace HalconCpp;
 
 #define TYPE_COUNT 7
 
-#define SPEED 0.0463
+#define SPEED 0.0450
 #define YMAX 200
 
-#define PXSCALEX 0.5531
-#define PXSCALEY 0.5361
-#define OFFSETX (-278.4)
-#define OFFSETY (-426.1+3)
+#define PXSCALEX 0.5744
+#define PXSCALEY 0.5625
+#define OFFSETX (-283.7)
+#define OFFSETY (-425.8+3)
 
-#define PLACE_OFFSET_X 33
+#define PLACE_OFFSET_X 35
 #define PLACE_OFFSET_Y 20
 #define PLACE_Z -398 
-#define GRID_SIZE 17.7
+#define GRID_SIZEX 17.95
+#define GRID_SIZEY 17.7
 #define GRAB_Z -430
 
 const double CenterPointOffsetX[TYPE_COUNT] = { 4, -8, 0, -1, -4, -6, -9 };
@@ -44,7 +45,7 @@ const double PlaceGridOffsetY[TYPE_COUNT][4] = {
 class TetrisInfo
 {
 public:
-    TetrisInfo(int type, HTuple &hv_Row, HTuple &hv_Column, HTuple &hv_Angle, QTime &t)
+    TetrisInfo(int type, HTuple hv_Row, HTuple hv_Column, HTuple hv_Angle, QTime &t)
     {
         double angle = hv_Angle.D();
         double centerx = hv_Column.D() + cos(angle) * CenterPointOffsetX[type] +
@@ -63,21 +64,15 @@ public:
         this->t = t;
         this->valid = true;
     }
-    TetrisInfo(int type, double x, double y, double angle, QTime &t)
-    {
-        this->type = type;
-        this->x = x;
-        this->y = y;
-        this->angle = angle;
-        this->t = t;
-        this->valid = true;
-    }
     bool UpdateInfo(QTime &t)
     {
         y -= SPEED * (t.msecsTo(this->t));
         this->t = t;
         if (y > YMAX) return false;
         return true;
+    }
+    void SetInvalid() { 
+        this->valid = false;  
     }
     int type;
     double x, y, angle;
@@ -99,9 +94,12 @@ protected:
         Unlock();
     }
 public:
-    TetrisInfo operator[] (int i) { return list[i]; }
+    TetrisInfo* operator + (int i) { 
+        return &(list[i]); 
+    }
+    TetrisInfo operator [] (int i) { return list[i]; }
     void clear() { list.clear(); }
-    void append(TetrisInfo & ti) { list.append(ti); }
+    void append(const TetrisInfo & ti) { list.append(ti); }
     int length() { return list.length(); }
     void removeAt(int index) { list.removeAt(index); }
     void Lock() { lock.lock(); }
@@ -182,9 +180,9 @@ public:
     double from_x, from_y, from_z;
     double to_x, to_y, to_z;
     double d_angle;
-    MachineControlInfo(TetrisInfo &ti, bool placeOnBoard = true)
+    MachineControlInfo(TetrisInfo * ti, bool placeOnBoard = true)
     {
-        type = ti.type;
+        type = ti->type;
         TetrisAI ta(type);
         TetrisPosition * sup_pos = ta.GetSupremePos();
         if (nullptr == sup_pos)
@@ -193,16 +191,18 @@ public:
             return;
         }
         if (placeOnBoard)
+        {
             TetrisAI::PlaceTetris(type, sup_pos);
-        to_x = sup_pos->x * GRID_SIZE + PLACE_OFFSET_X + PlaceGridOffsetX[type][sup_pos->r] * GRID_SIZE;
-        to_y = -sup_pos->y * GRID_SIZE + PLACE_OFFSET_Y - PlaceGridOffsetY[type][sup_pos->r] * GRID_SIZE;
+        }
+        to_x = sup_pos->x * GRID_SIZEX + PLACE_OFFSET_X + PlaceGridOffsetX[type][sup_pos->r] * GRID_SIZEX;
+        to_y = -sup_pos->y * GRID_SIZEY + PLACE_OFFSET_Y - PlaceGridOffsetY[type][sup_pos->r] * GRID_SIZEY;
         to_z = PLACE_Z;
-        d_angle = -sup_pos->r * 90 + ti.angle;
+        d_angle = -sup_pos->r * 90 + ti->angle;
         ApplyAngleSymmetry();
         QTime time = QTime::currentTime();
-        ti.UpdateInfo(time);
-        from_x = ti.x;
-        from_y = ti.y;
+        ti->UpdateInfo(time);
+        from_x = ti->x;
+        from_y = ti->y;
         from_z = GRAB_Z;
     }
 };
@@ -214,7 +214,7 @@ public:
     ~Video();
 
 protected:
-    void run();
+    virtual void run() override;
 
 public:
     bool OpenCamera(char *index, QWidget *widget);

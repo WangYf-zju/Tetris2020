@@ -32,21 +32,21 @@ void Video::run()
 
     hv_CameraParameters.Clear();
     hv_CameraParameters[0] = "area_scan_division";
-    hv_CameraParameters[1] = 0.00912789;
-    hv_CameraParameters[2] = -6739.61;
-    hv_CameraParameters[3] = 8.2967e-006;
+    hv_CameraParameters[1] = 0.00247494;
+    hv_CameraParameters[2] = -6886.65;
+    hv_CameraParameters[3] = 8.29834e-006;
     hv_CameraParameters[4] = 8.3e-006;
-    hv_CameraParameters[5] = 315.865;
-    hv_CameraParameters[6] = 223.646;
+    hv_CameraParameters[5] = 319.672;
+    hv_CameraParameters[6] = 225.157;
     hv_CameraParameters[7] = 640;
     hv_CameraParameters[8] = 480;
     hv_CameraPose.Clear();
-    hv_CameraPose[0] = -0.0332149;
-    hv_CameraPose[1] = 0.0287282;
-    hv_CameraPose[2] = 0.600862;
-    hv_CameraPose[3] = 359.243;
-    hv_CameraPose[4] = 358.26;
-    hv_CameraPose[5] = 179.204;
+    hv_CameraPose[0] = -0.0165625;
+    hv_CameraPose[1] = 0.028063;
+    hv_CameraPose[2] = 0.165684;
+    hv_CameraPose[3] = 359.884;
+    hv_CameraPose[4] = 0.145967;
+    hv_CameraPose[5] = 0.123582;
     hv_CameraPose[6] = 0;
 
     ChangeRadialDistortionCamPar("adaptive", hv_CameraParameters, 0, &hv_CamParamOut);
@@ -188,22 +188,22 @@ void Video::DrawContour(int type, HTuple hv_Row, HTuple hv_Column, HTuple hv_Ang
 
 void Video::AddTetrisToGrabList(TetrisInfo & ti, QTime time)
 {
-    const double error = 10;
+    const double error = 20;
     for (int i = 0; i < grabList.length(); )
     {
-        TetrisInfo temp_ti = grabList[i];
-        if (!ti.UpdateInfo(time))
+        TetrisInfo * temp_ti = grabList + i;
+        if (!temp_ti->UpdateInfo(time))
         {
             grabList.removeAt(i);
             continue;
         }
-        if (ti.type == ti.type && (fabs(ti.x - ti.x) <= error &&
-            fabs(ti.y - ti.y) <= error))
+        if (temp_ti->type == ti.type && (fabs(temp_ti->x - ti.x) <= error &&
+            fabs(temp_ti->y - ti.y) <= error))
         {
-            ti.x = ti.x;
-            ti.y = ti.y;
-            ti.angle = ti.angle;
-            ti.t = ti.t;
+            temp_ti->x = ti.x;
+            temp_ti->y = ti.y;
+            temp_ti->angle = ti.angle;
+            temp_ti->t = ti.t;
             return;
         }
         i++;

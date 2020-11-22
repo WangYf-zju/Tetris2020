@@ -17,7 +17,7 @@ typedef struct {
 class BoardState
 {
 public:
-    int * operator[](const int & i) { return bsa[i]; }
+    int* operator[](int i) { return bsa[i]; }
 private:
     BoardStateArray bsa;
 };

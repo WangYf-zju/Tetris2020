@@ -6,6 +6,9 @@
 #include <QMouseEvent>
 #include "TetrisAI.h"
 
+#define ScoreForEachTetris 1
+#define ScoreForEachRow 5
+
 class BoardArea : public QWidget
 {
     Q_OBJECT
@@ -18,6 +21,7 @@ public:
     void BindBoard(BoardState * pBoard);
     bool IsModifyBoard() { return isModify; }
     void ReverseModify() { isModify = !isModify; }
+    int CalculateScore();
 
 protected:
     void paintEvent(QPaintEvent * event) override;
@@ -30,6 +34,8 @@ private:
     void DrawBlock(QPainter & painter, const int x, const int y);
     void DrawBlock(QPainter & painter, const int x, const int y, const QColor &color);
     void DrawBoard(QPainter & painter);
+    int CountFullRow();
+    int CountTetrisNum();
     static const QColor * color;
 };
 

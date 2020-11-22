@@ -31,17 +31,17 @@ void App::run()
         if (sup_index >= 0)
         {
             v.grabList.Lock();
-            TetrisInfo sup_tetris = v.grabList[sup_index];
+            TetrisInfo * sup_tetris = v.grabList + sup_index;
             MachineControlInfo mi(sup_tetris, true);
+            sup_tetris->valid = false;
             m.Grab(mi.from_x, mi.from_y, mi.from_z, 
                 mi.to_x, mi.to_y, mi.to_z, mi.d_angle);
-            sup_tetris.valid = false;
             grab = true;
             v.grabList.Unlock();
         }
         if (grab)
         {
-            emit updateBoard();
+            emit grabTetris();
             msleep(2000);
             grab = false;
         }

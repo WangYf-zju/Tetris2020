@@ -7,7 +7,7 @@
 
 #include "MachineController.h"
 #include "Video.h"
-
+#include "Server.h"
 
 class App: public QThread
 {
@@ -18,11 +18,12 @@ public:
     ~App();
 
 protected:
-    void run();
+    virtual void run() override;
 
 public:
     MachineController mc;
     Video v;
+    Server s;
     bool IsAppStart() { return isStart; }
     void StartApp();
     void StopApp();
@@ -31,7 +32,7 @@ private:
     bool isStart;
 
 signals:
-    void updateBoard();
+    void grabTetris();
     void appStart();
     void appStop();
 };
