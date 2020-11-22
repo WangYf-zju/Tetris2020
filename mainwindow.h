@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QStandardItemModel>
+#include <QCloseEvent>
 #include "App.h"
 
 QT_BEGIN_NAMESPACE
@@ -26,6 +27,9 @@ private:
     App app;
     QStandardItemModel *itemModel;
     QTimer timer;
+
+protected:
+    void closeEvent(QCloseEvent * event) override;
 
 public:
     void SearchDevice();

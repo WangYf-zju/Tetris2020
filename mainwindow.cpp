@@ -31,11 +31,15 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 MainWindow::~MainWindow()
-{
-    app.v.CloseCamera();
+{ 
     delete ui;
 }
 
+
+void MainWindow::closeEvent(QCloseEvent * event)
+{
+    app.v.CloseCamera();
+}
 
 void MainWindow::SearchDevice()
 {
@@ -117,6 +121,12 @@ void MainWindow::ConnectSerial()
 
 void MainWindow::SetMachineState()
 {
+    if (!app.mc.IsSerialOpen())
+    {
+        QMessageBox::warning(this, "Error", "Serial Port has not been connected!",
+            QMessageBox::Ok);
+        return;
+    }
     int16_t x = ui->SBX->value();
     int16_t y = ui->SBY->value();
     int16_t z = ui->SBZ->value();

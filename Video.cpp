@@ -53,7 +53,7 @@ void Video::run()
     GenRadialDistortionMap(&ho_Map, hv_CameraParameters, hv_CamParamOut, "bilinear");
     GenRectangle1(&ho_Region, 80, 0, 480, 640);
 
-    wait(1000);
+    msleep(1000);
     while (isCameraOpen)
     {
         GrabImage(&ho_Image, hv_AcqHandle);
@@ -67,10 +67,16 @@ void Video::run()
         Distinguish(ho_ImageReduce);
         grabList.Unlock();
         DrawCoor();
-        wait(200);
+        msleep(200);
     }
     CloseFramegrabber(hv_AcqHandle);
-    CloseWindow(hv_WindowHandle);
+    try
+    {
+        CloseWindow(hv_WindowHandle);
+    }
+    catch (...) {
+
+    }
 }
 
 
@@ -100,8 +106,9 @@ bool Video::OpenCamera(char * index, QWidget * widget)
 
 void Video::CloseCamera()
 {
-    msleep(1000);
     isCameraOpen = false;
+    exit();
+    msleep(1000);
 }
 
 bool Video::IsCameraOpen()

@@ -11,8 +11,7 @@ App::~App()
 
 void App::run()
 {
-    emit appStart();
-    
+    emit appStart();   
     msleep(1000);
     MachineController m;
     m.OpenSerial(portname);
@@ -40,8 +39,8 @@ void App::run()
             grab = false;
         }
     }
-    emit appStop();
     m.CloseSerial();
+    emit appStop();
 }
 
 void App::StartApp()
@@ -60,5 +59,5 @@ void App::StartApp()
 void App::StopApp()
 {
     isStart = false;
-    wait(1000);
+    msleep(1000);
 }
