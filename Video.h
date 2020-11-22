@@ -197,7 +197,7 @@ public:
         to_x = sup_pos->x * GRID_SIZEX + PLACE_OFFSET_X + PlaceGridOffsetX[type][sup_pos->r] * GRID_SIZEX;
         to_y = -sup_pos->y * GRID_SIZEY + PLACE_OFFSET_Y - PlaceGridOffsetY[type][sup_pos->r] * GRID_SIZEY;
         to_z = PLACE_Z;
-        d_angle = -sup_pos->r * 90 + ti->angle;
+        d_angle = -sup_pos->r * 90.0 + ti->angle;
         ApplyAngleSymmetry();
         QTime time = QTime::currentTime();
         ti->UpdateInfo(time);
@@ -222,14 +222,15 @@ public:
     bool IsCameraOpen();
     TetrisGrabList grabList;
     TetrisList viewList;
-    //QMutex lock;
 
 private:
     void Distinguish(HObject &img);
     void DrawContour(int type, HTuple hv_Row, HTuple hv_Column, 
         HTuple hv_Angle, HTuple hv_Scale, const char * color);
+    void DrawCoor();
     void AddTetrisToGrabList(TetrisInfo &ti, QTime time);
     void AddTetrisToViewList(TetrisInfo &ti);
+    
     bool isCameraOpen;
     HTuple hv_ModelID[TYPE_COUNT];
     HTuple hv_WindowHandle, hv_AcqHandle;

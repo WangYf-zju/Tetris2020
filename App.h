@@ -30,6 +30,7 @@ public:
 
 private:
     bool isStart;
+    QString portname;
 
 signals:
     void grabTetris();

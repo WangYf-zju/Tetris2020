@@ -66,6 +66,7 @@ void Video::run()
         grabList.Lock();
         Distinguish(ho_ImageReduce);
         grabList.Unlock();
+        DrawCoor();
         wait(200);
     }
     CloseFramegrabber(hv_AcqHandle);
@@ -77,6 +78,7 @@ bool Video::OpenCamera(char * index, QWidget * widget)
 {
     if (isCameraOpen)
     {
+        
         return false;
     }
     HWND hWnd = (HWND)widget->winId();
@@ -98,8 +100,8 @@ bool Video::OpenCamera(char * index, QWidget * widget)
 
 void Video::CloseCamera()
 {
+    msleep(1000);
     isCameraOpen = false;
-    wait(1000);
 }
 
 bool Video::IsCameraOpen()
@@ -183,6 +185,18 @@ void Video::DrawContour(int type, HTuple hv_Row, HTuple hv_Column, HTuple hv_Ang
     SetLineWidth(hv_WindowHandle, 5);
 
     DispObj(ho_TransContours, hv_WindowHandle);
+}
+
+void Video::DrawCoor()
+{
+    HObject HCoordinate;
+    SetColor(hv_WindowHandle, "white");
+    SetLineWidth(hv_WindowHandle, 10);
+    GenRegionLine(&HCoordinate, HTuple(30), HTuple(315), HTuple(200), HTuple(315));
+    DispObj(HCoordinate, hv_WindowHandle);
+    GenRegionLine(&HCoordinate, HTuple(30), HTuple(315), HTuple(30), HTuple(500));
+    DispObj(HCoordinate, hv_WindowHandle);
+
 }
 
 

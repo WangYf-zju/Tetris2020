@@ -4,6 +4,7 @@ Server::Server()
 {
     pServer = new QWebSocketServer(QString("LocalHost"), 
         QWebSocketServer::NonSecureMode, this);
+    pClientConnection = nullptr;
     connect(pServer, &QWebSocketServer::newConnection, this, [&]() { NewConnect(); });
 }
 

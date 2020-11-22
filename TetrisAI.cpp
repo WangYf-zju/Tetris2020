@@ -143,8 +143,8 @@ double TetrisAI::Rank(int x, int y, int r)
     int dCR2 = m_CRCount[1] - oldCR2;
     int dCR3 = m_CRCount[2] - oldCR3;
     RemoveTetris(x, y, r);
-    double rank = -5 * LH + 10 * dER - 3 * dRT - 5 * dCT - 5 * dHole
-        - 50 * dCR1 - 75 * dCR2 - 100 * dCR3;
+    double rank = -5.0 * LH + 10.0 * dER - 3.0 * dRT - 5.0 * dCT - 5.0 * dHole
+        - 50.0 * dCR1 - 75.0 * dCR2 - 100.0 * dCR3;
     return rank;
 }
 
@@ -263,7 +263,9 @@ double TetrisAI::GetSupremeRank(int type)
 
 void TetrisAI::ReverseBlock(int x, int y)
 {
-    (*PBoard)[y][x] = !(*PBoard)[y][x];
+    if ((*PBoard)[y][x]) (*PBoard)[y][x] = 0;
+    else (*PBoard)[y][x] = 1;
+    // (*PBoard)[y][x] = !(*PBoard)[y][x];
 }
 
 void TetrisAI::SetBlock(int x, int y, int color)

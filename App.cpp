@@ -11,17 +11,11 @@ App::~App()
 
 void App::run()
 {
-    if (!v.IsCameraOpen() || !mc.IsSerialOpen())
-    {
-        isStart = false;
-        return;
-    }
     emit appStart();
-    QString name = mc.SerialName();
-    mc.CloseSerial();
+    
     msleep(1000);
     MachineController m;
-    m.OpenSerial(name);
+    m.OpenSerial(portname);
     bool grab = false;
     v.grabList.clear();
     m.GoToReferPoint();
@@ -52,7 +46,14 @@ void App::run()
 
 void App::StartApp()
 {
+    if (!v.IsCameraOpen() || !mc.IsSerialOpen())
+    {
+        isStart = false;
+        return;
+    }
     isStart = true;
+    portname = mc.SerialName();
+    mc.CloseSerial();
     start();
 }
 
