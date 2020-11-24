@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->PBStart, &QPushButton::clicked, this, [&]() { START(); });
     connect(ui->PBModify, &QPushButton::clicked, this, [&]() { ModifyBoard(); });
     connect(ui->PBClear, &QPushButton::clicked, this, [&]() { ClearBoard(); });
+    InitMenu();
     SearchDevice();
     app.s.StartServer(3000);
 }
@@ -39,6 +40,58 @@ MainWindow::~MainWindow()
 void MainWindow::closeEvent(QCloseEvent * event)
 {
     app.v.CloseCamera();
+    int choice = QMessageBox::warning(this, "Tetris", "Save Paremeters?",
+        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+    if (choice == QMessageBox::Cancel)
+        event->ignore();
+    else if (choice == QMessageBox::Yes)
+    {
+        if (!ExportParameters())
+            event->ignore();
+    }
+}
+
+void MainWindow::InitMenu()
+{
+    QMenu * settings = ui->menubar->addMenu(QString("Parameter Setting"));
+    QAction * importParams = settings->addAction(QString("Import Params"));
+    QAction * exportParams = settings->addAction(QString("Export Params"));
+    connect(importParams, &QAction::triggered, this, [&]() { ImportParameters(); });
+    connect(exportParams, &QAction::triggered, this, [&]() { ExportParameters(); });
+}
+
+bool MainWindow::ImportParameters()
+{
+    QString filename = QFileDialog::getOpenFileName(this, "Select File", ".", "*.*");
+    if (filename != nullptr)
+    {
+        try
+        {
+            TetrisParameter::ImportParameters(filename);
+        }
+        catch (...)
+        {
+            QMessageBox::warning(this, "Error", "Fail to open file", QMessageBox::Ok);
+        }
+        if (app.v.IsCameraOpen())
+        {
+            QMessageBox::warning(this, "Tetris", 
+                "Camera Parameters will be updated when camera reconnect", QMessageBox::Ok);
+        }
+        return true;
+    }
+    return false;
+}
+
+bool MainWindow::ExportParameters()
+{
+    QString filename = QFileDialog::getSaveFileName(this, "Save", ".", "*.ini");
+    if (filename != nullptr)
+    {
+        TetrisParameter::ExportParameters(filename);
+        return true;
+    }
+    return false;
 }
 
 void MainWindow::SearchDevice()
@@ -231,3 +284,4 @@ void MainWindow::UnlockUI()
     ui->PBSerial->setEnabled(true);
     ui->PBSet->setEnabled(true);
 }
+

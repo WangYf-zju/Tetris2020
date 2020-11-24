@@ -1,12 +1,6 @@
 #include "Video.h"
 #include <stdio.h>
-#include <math.h>
 
-double TetrisGrabList::grabXMin = -190;
-double TetrisGrabList::grabXMax = 190;
-double TetrisGrabList::grabYMin = -180;
-double TetrisGrabList::grabYMax = 180;
-double TetrisGrabList::grabYWarn = 120;
 
 Video::Video()
 {
@@ -31,23 +25,23 @@ void Video::run()
     HTuple  hv_CameraParameters, hv_CameraPose, hv_CamParamOut;
 
     hv_CameraParameters.Clear();
-    hv_CameraParameters[0] = "area_scan_division";
-    hv_CameraParameters[1] = 0.00247494;
-    hv_CameraParameters[2] = -6886.65;
-    hv_CameraParameters[3] = 8.29834e-006;
-    hv_CameraParameters[4] = 8.3e-006;
-    hv_CameraParameters[5] = 319.672;
-    hv_CameraParameters[6] = 225.157;
-    hv_CameraParameters[7] = 640;
-    hv_CameraParameters[8] = 480;
+    hv_CameraParameters[0] = TetrisParameter::CameraParameters0;
+    hv_CameraParameters[1] = TetrisParameter::CameraParameters1;
+    hv_CameraParameters[2] = TetrisParameter::CameraParameters2;
+    hv_CameraParameters[3] = TetrisParameter::CameraParameters3;
+    hv_CameraParameters[4] = TetrisParameter::CameraParameters4;
+    hv_CameraParameters[5] = TetrisParameter::CameraParameters5;
+    hv_CameraParameters[6] = TetrisParameter::CameraParameters6;
+    hv_CameraParameters[7] = TetrisParameter::CameraParameters7;
+    hv_CameraParameters[8] = TetrisParameter::CameraParameters8;
     hv_CameraPose.Clear();
-    hv_CameraPose[0] = -0.0165625;
-    hv_CameraPose[1] = 0.028063;
-    hv_CameraPose[2] = 0.165684;
-    hv_CameraPose[3] = 359.884;
-    hv_CameraPose[4] = 0.145967;
-    hv_CameraPose[5] = 0.123582;
-    hv_CameraPose[6] = 0;
+    hv_CameraPose[0] = TetrisParameter::CameraPose0;
+    hv_CameraPose[1] = TetrisParameter::CameraPose1;
+    hv_CameraPose[2] = TetrisParameter::CameraPose2;
+    hv_CameraPose[3] = TetrisParameter::CameraPose3;
+    hv_CameraPose[4] = TetrisParameter::CameraPose4;
+    hv_CameraPose[5] = TetrisParameter::CameraPose5;
+    hv_CameraPose[6] = TetrisParameter::CameraPose6;
 
     ChangeRadialDistortionCamPar("adaptive", hv_CameraParameters, 0, &hv_CamParamOut);
     GenRadialDistortionMap(&ho_Map, hv_CameraParameters, hv_CamParamOut, "bilinear");
@@ -121,8 +115,6 @@ void Video::Distinguish(HObject & img)
     QTime time = QTime::currentTime();
     viewList.clear();
 
-    HTuple ScaleMin = 0.9;
-    HTuple ScaleMax = 1.25;
     HTuple MinScore[] = { 0.80,0.80,0.85,0.85,0.85,0.85,0.85 };
     HTuple NumMatches = 16;
     HTuple MaxOverlap = 0.5;

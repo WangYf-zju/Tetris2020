@@ -8,7 +8,10 @@
 #include <QTimer>
 #include <QStandardItemModel>
 #include <QCloseEvent>
+#include <QMenu>
+#include <QFileDialog>
 #include "App.h"
+#include "TetrisParameter.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -32,6 +35,9 @@ protected:
     void closeEvent(QCloseEvent * event) override;
 
 public:
+    void InitMenu();
+    bool ImportParameters();
+    bool ExportParameters();
     void SearchDevice();
     void ConnectCamera();
     void ConnectSerial();

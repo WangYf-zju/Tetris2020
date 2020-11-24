@@ -10,24 +10,12 @@
 #include <Windows.h>
 #include "TetrisAI.h"
 #include "HalconCpp.h"
+#include "TetrisParameter.h"
+
 using namespace HalconCpp;
 
 #define TYPE_COUNT 7
-
-#define SPEED 0.0450
 #define YMAX 200
-
-#define PXSCALEX 0.5744
-#define PXSCALEY 0.5625
-#define OFFSETX (-283.7)
-#define OFFSETY (-425.8+3)
-
-#define PLACE_OFFSET_X 35
-#define PLACE_OFFSET_Y 20
-#define PLACE_Z -398 
-#define GRID_SIZEX 17.95
-#define GRID_SIZEY 17.7
-#define GRAB_Z -430
 
 const double CenterPointOffsetX[TYPE_COUNT] = { 4, -8, 0, -1, -4, -6, -9 };
 const double CenterPointOffsetY[TYPE_COUNT] = { 3, 1, 2, 1, 1, -5, -5 };
@@ -57,16 +45,16 @@ public:
         if (this->angle > 180) this->angle -= 360;
         //this->x = centerx;
         //this->y = centery;
-        this->x = centery * PXSCALEX + OFFSETX + 
+        this->x = centery * TetrisParameter::IMAGE_SCALEX + TetrisParameter::IMAGE_OFFSETX +
             sin(HTuple(-this->angle).TupleRad().D()) * GrabPointOffset[type] + TestOffsetX[type];
-        this->y = centerx * PXSCALEY + OFFSETY -
+        this->y = centerx * TetrisParameter::IMAGE_SCALEY + TetrisParameter::IMAGE_OFFSETY -
             cos(HTuple(-this->angle).TupleRad().D()) * GrabPointOffset[type] + TestOffsetY[type];
         this->t = t;
         this->valid = true;
     }
     bool UpdateInfo(QTime &t)
     {
-        y -= SPEED * (t.msecsTo(this->t));
+        y -= TetrisParameter::CONVERY_SPEED * (t.msecsTo(this->t));
         this->t = t;
         if (y > YMAX) return false;
         return true;
@@ -109,16 +97,12 @@ public:
 class TetrisGrabList: public TetrisList
 {
 public:  
-    static double grabXMin;
-    static double grabXMax;
-    static double grabYMin;
-    static double grabYMax;
-    static double grabYWarn;
-
     bool isTetrisValid(int i)
     {
-        if (list[i].valid && list[i].y >= grabYMin && list[i].y <= grabYMax
-            && list[i].x >= grabXMin && list[i].x <= grabXMax)
+        if (list[i].valid && list[i].y >= TetrisParameter::MIN_GRABY 
+            && list[i].y <= TetrisParameter::MAX_GRABY
+            && list[i].x >= TetrisParameter::MIN_GRABX
+            && list[i].x <= TetrisParameter::MAX_GRABX)
         {
             return true;
         }
@@ -140,7 +124,7 @@ public:
                 rank = TetrisAI::GetSupremeRank(list[i].type);
                 if (rank > sup_rank ||
                     (sup_rank - rank < 1 && list[i].y > list[sup_index].y) ||
-                    list[i].y >= grabYWarn)
+                    list[i].y >= TetrisParameter::WARN_GRABY)
                 {
                     sup_index = i;
                 }
@@ -194,16 +178,20 @@ public:
         {
             TetrisAI::PlaceTetris(type, sup_pos);
         }
-        to_x = sup_pos->x * GRID_SIZEX + PLACE_OFFSET_X + PlaceGridOffsetX[type][sup_pos->r] * GRID_SIZEX;
-        to_y = -sup_pos->y * GRID_SIZEY + PLACE_OFFSET_Y - PlaceGridOffsetY[type][sup_pos->r] * GRID_SIZEY;
-        to_z = PLACE_Z;
+        to_x = sup_pos->x * TetrisParameter::PLACE_GRIDSIZEX + 
+            TetrisParameter::PLACE_OFFSETX + 
+            PlaceGridOffsetX[type][sup_pos->r] * TetrisParameter::PLACE_GRIDSIZEX;
+        to_y = -sup_pos->y * TetrisParameter::PLACE_GRIDSIZEY + 
+            TetrisParameter::PLACE_OFFSETY -
+            PlaceGridOffsetY[type][sup_pos->r] * TetrisParameter::PLACE_GRIDSIZEY;
+        to_z = TetrisParameter::PLACEZ;
         d_angle = -sup_pos->r * 90.0 + ti->angle;
         ApplyAngleSymmetry();
         QTime time = QTime::currentTime();
         ti->UpdateInfo(time);
         from_x = ti->x;
         from_y = ti->y;
-        from_z = GRAB_Z;
+        from_z = TetrisParameter::GRABZ;
     }
 };
 

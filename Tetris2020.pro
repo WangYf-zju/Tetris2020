@@ -19,6 +19,7 @@ SOURCES += \
     App.cpp \
     BoardArea.cpp \
     MachineController.cpp \
+    TetrisParameter.cpp \
     Server.cpp \
     TetrisAI.cpp \
     Video.cpp \
@@ -29,6 +30,7 @@ HEADERS += \
     App.h \
     BoardArea.h \
     MachineController.h \
+    TetrisParameter.h \
     Server.h \
     TetrisAI.h \
     Video.h \
