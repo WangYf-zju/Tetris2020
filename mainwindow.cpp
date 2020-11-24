@@ -29,6 +29,16 @@ MainWindow::MainWindow(QWidget *parent)
     InitMenu();
     SearchDevice();
     app.s.StartServer(3000);
+    try
+    {
+        TetrisParameter::ImportParameters(QString("./config.ini"));
+    }
+    catch (...)
+    {
+        QMessageBox::warning(this, "Tetris", 
+            "File config.ini not exists. Default parameters will be used.",
+            QMessageBox::Ok);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -62,7 +72,7 @@ void MainWindow::InitMenu()
 
 bool MainWindow::ImportParameters()
 {
-    QString filename = QFileDialog::getOpenFileName(this, "Select File", ".", "*.*");
+    QString filename = QFileDialog::getOpenFileName(this, "Select File", ".", "*.ini*");
     if (filename != nullptr)
     {
         try
@@ -85,7 +95,7 @@ bool MainWindow::ImportParameters()
 
 bool MainWindow::ExportParameters()
 {
-    QString filename = QFileDialog::getSaveFileName(this, "Save", ".", "*.ini");
+    QString filename = QFileDialog::getSaveFileName(this, "Save", "./config.ini", "*.ini");
     if (filename != nullptr)
     {
         TetrisParameter::ExportParameters(filename);
