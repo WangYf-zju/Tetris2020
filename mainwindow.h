@@ -49,5 +49,6 @@ public:
     void UpdateTableList();
     void LockUI();
     void UnlockUI();
+    void SendScore();
 };
 #endif // MAINWINDOW_H

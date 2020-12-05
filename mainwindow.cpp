@@ -13,9 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     });
     connect(&app, &App::grabTetris, this, [&]() { 
         ui->WBoard->UpdateBoard();
-        int score = ui->WBoard->CalculateScore();
-        QString msg = QString("{\"score\": %1}").arg(score);
-        app.s.SendData(msg);
+        SendScore();
     });
     connect(&app, &App::appStart, this, [&]() { LockUI(); });
     connect(&app, &App::appStop, this, [&]() { UnlockUI(); });
@@ -24,7 +22,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->PBCamera, &QPushButton::clicked, this, [&]() { ConnectCamera(); });
     connect(ui->PBSet, &QPushButton::clicked, this, [&]() { SetMachineState(); });
     connect(ui->PBStart, &QPushButton::clicked, this, [&]() { START(); });
-    connect(ui->PBModify, &QPushButton::clicked, this, [&]() { ModifyBoard(); });
+    connect(ui->PBModify, &QPushButton::clicked, this, [&]() { 
+        ModifyBoard(); 
+        SendScore();
+    });
     connect(ui->PBClear, &QPushButton::clicked, this, [&]() { ClearBoard(); });
     InitMenu();
     SearchDevice();
@@ -293,5 +294,13 @@ void MainWindow::UnlockUI()
     ui->CBSerial->setEnabled(true);
     ui->PBSerial->setEnabled(true);
     ui->PBSet->setEnabled(true);
+}
+
+void MainWindow::SendScore()
+{
+    ui->WBoard->UpdateBoard();
+    int score = ui->WBoard->CalculateScore();
+    QString msg = QString("{\"score\": %1}").arg(score);
+    app.s.SendData(msg);
 }
 

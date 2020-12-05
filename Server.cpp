@@ -4,26 +4,27 @@ Server::Server()
 {
     pServer = new QWebSocketServer(QString("LocalHost"), 
         QWebSocketServer::NonSecureMode, this);
-    pClientConnection = nullptr;
     connect(pServer, &QWebSocketServer::newConnection, this, [&]() { NewConnect(); });
 }
 
 bool Server::StartServer(quint16 port = 3000)
 {
-    return pServer->listen(QHostAddress::LocalHost, port);
+    return pServer->listen(QHostAddress("192.168.137.1"), port);
 }
 
 void Server::NewConnect()
 {
-    if (pClientConnection)
+    if (vClientConnection.length() > MAX_CONNECT)
     {
-        pClientConnection->close();
+        pServer->nextPendingConnection()->close();
     }
-    pClientConnection = pServer->nextPendingConnection();
+    vClientConnection.push_back(pServer->nextPendingConnection());
 }
 
 void Server::SendData(QString msg)
 {
-    if (pClientConnection)
-        pClientConnection->sendTextMessage(msg);
+    for (int i = 0; i < vClientConnection.length(); i++)
+    {
+        vClientConnection[i] && vClientConnection[i]->sendTextMessage(msg);
+    }
 }

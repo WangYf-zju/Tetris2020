@@ -10,7 +10,14 @@ Video::Video()
     {
         char path[100] = { 0 };
         sprintf_s(path, "./models/model%d.shm", i + 1);
-        ReadShapeModel(path, &hv_ModelID[i]);
+        try
+        {
+            ReadShapeModel(path, &hv_ModelID[i]);
+        }
+        catch (HException e)
+        {
+            throw e.ErrorText().Text();
+        }
     }
 }
 

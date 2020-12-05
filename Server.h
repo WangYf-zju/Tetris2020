@@ -1,10 +1,13 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+#include <QVector>
 #include <QObject>
 #include <QWebSocketServer>
 #include <QWebSocket>
 #include <QTimer>
+
+#define MAX_CONNECT 20
 
 class Server: public QObject
 {
@@ -17,7 +20,7 @@ public:
 
 private:
     QWebSocketServer * pServer;
-    QWebSocket * pClientConnection;
+    QVector<QWebSocket*> vClientConnection;
     void NewConnect();
 };
 
